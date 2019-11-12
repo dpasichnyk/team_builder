@@ -1,0 +1,34 @@
+<% if @questionnaire.present? %>
+  <div class="col col-lg-12 mb-4">
+    <h2><%= @questionnaire.created_at.to_date.strftime('%A') %>'s lunch questionnaire is active!</h2>
+    <div>Ends in <span id="countdown" data-date="<%= @questionnaire.ends_at %>"></span></div>
+    <% if current_user.in?(@questionnaire.users) %>
+      <%= link_to "I won't go!", questionnaires_destroy_path, method: :delete, class: 'btn btn-danger' %>
+    <% else %>
+      <%= link_to "Participate", questionnaires_update_path, method: :post,  class: 'btn btn-primary' %>
+    <% end %>
+  </div>
+
+  <h5>Participants</h5>
+  <table class="table table-light">
+    <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Name</th>
+      <th scope="col">Department</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% @questionnaire.users.each_with_index do |user, idx| %>
+      <tr>
+        <%= content_tag :td, idx + 1 %>
+        <%= content_tag :td, full_name_for(user) %>
+        <%= content_tag :td, user.department&.name || '-' %>
+    </tr>
+    <% end %>
+    </tbody>
+  </table>
+
+<% else %>
+  <h2>No scheduled events for today :(</h2>
+<% end %>
